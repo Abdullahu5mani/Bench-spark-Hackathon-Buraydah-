@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify, render_template
 import json
 import uuid
 import os
+import time
 from datetime import datetime
 import vertexai
 from vertexai.generative_models import GenerativeModel, Tool, FunctionDeclaration, Part, GenerationConfig
@@ -424,7 +425,6 @@ def get_eval_questions():
 @app.route("/eval/run", methods=["POST"])
 def run_evaluation():
     """Run evaluation on all or selected questions"""
-    import time
     data = request.json or {}
     categories = data.get("categories", list(EVAL_QUESTIONS.keys()))
     delay = data.get("delay", 3)

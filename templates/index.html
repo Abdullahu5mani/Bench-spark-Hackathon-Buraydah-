@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neuro Co-Scientist</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Neuro Co-Scientist</h1>
+    <p class="subtitle">
+      Search 29,000+ neuroscience papers and compound data with AI.
+    </p>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="search">Search</button>
+    <button class="tab" data-tab="library">Library</button>
+  </nav>
+
+  <div id="searchView" class="view active">
+    <div class="input-card">
+      <textarea id="question" placeholder="Ask a research question..."></textarea>
+      <div class="input-footer">
+        <button class="submit-btn" id="submitBtn" onclick="submitQuery()">Search</button>
+      </div>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div class="loading-text" id="loadingText">Searching...</div>
+      <div class="hop-log" id="hopLog"></div>
+    </div>
+
+    <div class="error-card" id="errorCard"></div>
+
+    <div class="result-card" id="resultCard">
+      <div class="result-header">
+        <div class="result-status">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Answer</span>
+        </div>
+        <span class="hop-count" id="hopCount"></span>
+      </div>
+      <div class="result-body" id="resultBody"></div>
+      
+      <div class="cited-papers-section" id="citedPapersSection">
+        <div class="cited-papers-header">Cited Papers</div>
+        <div class="cited-papers-list" id="citedPapersList"></div>
+      </div>
+
+      <div class="trace-section active" id="traceSection">
+        <button class="trace-toggle" onclick="toggleTrace()">
+          <span id="traceArrow">&#9654;</span>
+          <span>Show reasoning trace</span>
+        </button>
+        <div class="trace-entries" id="traceEntries"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="libraryView" class="view">
+    <div class="library-layout">
+      <aside class="folder-sidebar">
+        <div class="sidebar-header">
+          <span>Folders</span>
+          <button class="icon-btn" id="newFolderBtn" title="New folder">+</button>
+        </div>
+        <div class="folder-list" id="folderList">
+          <div class="folder-item active" data-folder-id="all">All Papers</div>
+          <div class="folder-item" data-folder-id="unfiled">Unfiled</div>
+        </div>
+      </aside>
+      <main class="paper-main">
+        <div class="paper-header">
+          <h2 id="currentFolderName">All Papers</h2>
+          <span class="paper-count" id="paperCount">0 papers</span>
+        </div>
+        <div class="paper-list" id="paperList"></div>
+        <div class="empty-state" id="emptyState">
+          <p>No papers saved yet.</p>
+          <p class="muted">Search and save papers to build your library.</p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <footer>Neuro Co-Scientist</footer>
+</div>
+
+<div class="modal" id="folderModal">
+  <div class="modal-content">
+    <div class="modal-header">New Folder</div>
+    <input type="text" id="folderNameInput" placeholder="Folder name...">
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeFolderModal()">Cancel</button>
+      <button class="btn-primary" onclick="createFolder()">Create</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="savePaperModal">
+  <div class="modal-content">
+    <div class="modal-header">Save to Library</div>
+    <p class="modal-paper-title" id="savePaperTitle"></p>
+    <select id="savePaperFolder">
+      <option value="">Unfiled</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeSavePaperModal()">Cancel</button>
+      <button class="btn-primary" onclick="confirmSavePaper()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

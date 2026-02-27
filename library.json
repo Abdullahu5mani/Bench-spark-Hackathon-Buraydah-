@@ -1,0 +1,27 @@
+{
+  "folders": [
+    {
+      "id": "3597e631-a7d0-4017-9fcc-5e61952424c7",
+      "name": "HWLE",
+      "created_at": "2026-02-27T16:19:18.265730"
+    }
+  ],
+  "papers": [
+    {
+      "id": "1d6b6712-0d9c-49ee-890b-05d007102887",
+      "pmid": "41226200",
+      "title": "Protein\u2013Ligand Interactions in Cardiometabolic Drug Targets: Focus on Weight Loss and Cardioprotection",
+      "folder_id": "3597e631-a7d0-4017-9fcc-5e61952424c7",
+      "saved_at": "2026-02-27T16:19:07.409458",
+      "notes": ""
+    },
+    {
+      "id": "441dd021-0649-45e6-87d3-b6fa09000a63",
+      "pmid": "41130969",
+      "title": "The role of circadian rest-activity rhythm for the link between 25-hydroxyvitamin D and type 2 diabetes: a cohort study",
+      "folder_id": null,
+      "saved_at": "2026-02-27T16:19:10.705666",
+      "notes": ""
+    }
+  ]
+}

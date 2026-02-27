@@ -324,6 +324,205 @@ def update_paper(paper_id):
     return jsonify({"error": "Paper not found"}), 404
 
 
+# ── 30 Evaluation Questions ────────────────────────────────────────────────────
+EVAL_QUESTIONS = {
+    "simple": [
+        {"id": "S1",  "question": "What is the mechanism of action of donepezil in Alzheimer's disease?",
+         "expected_concepts": ["acetylcholinesterase", "cholinergic", "AChE"]},
+        {"id": "S2",  "question": "What protein aggregates are found in the brains of Parkinson's disease patients?",
+         "expected_concepts": ["synuclein", "Lewy bodies"]},
+        {"id": "S3",  "question": "What is the role of BACE1 in Alzheimer's disease?",
+         "expected_concepts": ["amyloid", "APP", "cleavage"]},
+        {"id": "S4",  "question": "What neurotransmitter is deficient in Parkinson's disease?",
+         "expected_concepts": ["dopamine", "substantia nigra"]},
+        {"id": "S5",  "question": "What is the function of myelin in the nervous system?",
+         "expected_concepts": ["conduction", "white matter", "demyelination"]},
+        {"id": "S6",  "question": "What is the potency of Tramiprosate against Beta amyloid A4 protein?",
+         "expected_concepts": ["IC50", "100000", "amyloid"]},
+        {"id": "S7",  "question": "What causes excitotoxicity in neurons?",
+         "expected_concepts": ["glutamate", "excitatory", "inhibitory"]},
+        {"id": "S8",  "question": "What is the blood-brain barrier and why does it matter for drug delivery?",
+         "expected_concepts": ["tight junctions", "endothelial", "CNS"]},
+        {"id": "S9",  "question": "How does memantine work in treating Alzheimer's disease?",
+         "expected_concepts": ["NMDA", "antagonist", "glutamate"]},
+        {"id": "S10", "question": "What is the role of microglia in neuroinflammation?",
+         "expected_concepts": ["immune", "cytokines", "activation"]},
+    ],
+    "multi_hop": [
+        {"id": "M1",  "question": "Which drugs target Beta amyloid A4 protein and what are their potency values?",
+         "expected_concepts": ["Tramiprosate", "Carvedilol", "IC50", "amyloid"]},
+        {"id": "M2",  "question": "How does neuroinflammation contribute to amyloid plaque formation in Alzheimer's disease?",
+         "expected_concepts": ["microglia", "amyloid", "neuroinflammation", "lysosom"]},
+        {"id": "M3",  "question": "What is the relationship between tau phosphorylation and neurodegeneration?",
+         "expected_concepts": ["tau", "phosphorylation", "neurofibrillary", "neurodegeneration"]},
+        {"id": "M4",  "question": "How do mitochondrial dysfunction and oxidative stress interact in Parkinson's disease?",
+         "expected_concepts": ["mitochondria", "oxidative stress", "dopaminergic", "ROS"]},
+        {"id": "M5",  "question": "What signaling pathways are involved in both neuroprotection and neurodegeneration?",
+         "expected_concepts": ["mTOR", "oxidative stress", "apoptosis", "neuroinflammation"]},
+        {"id": "M6",  "question": "How does the gut-brain axis influence neurological disease?",
+         "expected_concepts": ["microbiome", "dysbiosis", "inflammation", "gut"]},
+        {"id": "M7",  "question": "What is the connection between ALS and TDP-43 protein aggregation?",
+         "expected_concepts": ["TDP-43", "TARDBP", "aggregation", "ALS"]},
+        {"id": "M8",  "question": "How do CREB and BDNF signaling interact to support memory formation?",
+         "expected_concepts": ["CREB", "BDNF", "memory", "neuroprotection"]},
+        {"id": "M9",  "question": "What are the common mechanisms between multiple sclerosis and other demyelinating diseases?",
+         "expected_concepts": ["myelin", "autoimmune", "demyelination", "neuroinflammation"]},
+        {"id": "M10", "question": "How does Carvedilol relate to both cardiovascular disease and neurodegeneration?",
+         "expected_concepts": ["Carvedilol", "amyloid", "cardiovascular", "neuroprotect"]},
+    ],
+    "semantic_gap": [
+        {"id": "SG1",  "question": "How do brain cleaning mechanisms fail in Alzheimer's?",
+         "expected_concepts": ["clearance", "tau", "accumulation", "protein"],
+         "gap": "'cleaning' → 'autophagy / glymphatic clearance'"},
+        {"id": "SG2",  "question": "Why do nerve cells stop talking to each other in neurodegeneration?",
+         "expected_concepts": ["synaptic", "aggregation", "dopaminergic"],
+         "gap": "'stop talking' → 'synaptic dysfunction / transmission failure'"},
+        {"id": "SG3",  "question": "How does brain inflammation speed up memory loss?",
+         "expected_concepts": ["neuroinflammation", "hippocampal", "TNF"],
+         "gap": "'brain inflammation' → 'neuroinflammation', 'memory loss' → 'cognitive decline'"},
+        {"id": "SG4",  "question": "What happens when the brain's protein recycling system breaks down?",
+         "expected_concepts": ["proteasome", "aggregation", "lysosom", "misfolded"],
+         "gap": "'protein recycling' → 'ubiquitin-proteasome pathway'"},
+        {"id": "SG5",  "question": "How do sticky protein clumps kill neurons?",
+         "expected_concepts": ["aggregates", "synuclein", "neurotoxic", "neuroinflammation"],
+         "gap": "'sticky protein clumps' → 'amyloid oligomers / toxic aggregates'"},
+        {"id": "SG6",  "question": "What drugs slow down the progression of the shaking disease?",
+         "expected_concepts": ["Parkinson", "dopamine", "dopaminergic"],
+         "gap": "'shaking disease' → 'Parkinson's disease / tremor'"},
+        {"id": "SG7",  "question": "How does the brain's power supply failure contribute to neuron death?",
+         "expected_concepts": ["mitochondrial", "oxidative", "ROS", "energy"],
+         "gap": "'power supply failure' → 'mitochondrial dysfunction / bioenergetic failure'"},
+        {"id": "SG8",  "question": "What causes the protective coating of nerve fibers to deteriorate?",
+         "expected_concepts": ["white matter", "myelin", "degeneration"],
+         "gap": "'protective coating' → 'myelin sheath / demyelination'"},
+        {"id": "SG9",  "question": "How do brain support cells become harmful during disease?",
+         "expected_concepts": ["astrocyte", "microglia", "neuroinflammation", "cytokine"],
+         "gap": "'support cells' → 'astrocytes / microglia / glia'"},
+        {"id": "SG10", "question": "How does faulty electrical signaling in the brain lead to seizures?",
+         "expected_concepts": ["epilepsy", "GABA", "inhibitory", "ion channel"],
+         "gap": "'faulty electrical signaling' → 'aberrant neuronal firing / GABAergic inhibition'"},
+    ]
+}
+
+def _score_answer(answer: str, expected_concepts: list) -> dict:
+    answer_lower = answer.lower()
+    hits   = [c for c in expected_concepts if c.lower() in answer_lower]
+    missed = [c for c in expected_concepts if c.lower() not in answer_lower]
+    coverage = len(hits) / len(expected_concepts) if expected_concepts else 0
+    return {
+        "hits":     hits,
+        "missed":   missed,
+        "coverage": round(coverage, 2),
+        "pass":     coverage >= 0.5
+    }
+
+@app.route("/eval/questions", methods=["GET"])
+def get_eval_questions():
+    """Return all 30 evaluation questions"""
+    return jsonify(EVAL_QUESTIONS)
+
+@app.route("/eval/run", methods=["POST"])
+def run_evaluation():
+    """Run evaluation on all or selected questions"""
+    import time
+    data = request.json or {}
+    categories = data.get("categories", list(EVAL_QUESTIONS.keys()))
+    delay = data.get("delay", 3)
+    
+    all_rows = []
+    category_summary = {}
+    
+    for category in categories:
+        if category not in EVAL_QUESTIONS:
+            continue
+        questions = EVAL_QUESTIONS[category]
+        cat_passed = 0
+        
+        for q in questions:
+            try:
+                result = run_neuro_agent(q["question"])
+                answer = result.get("answer", "")
+                score = _score_answer(answer, q["expected_concepts"])
+                if score["pass"]:
+                    cat_passed += 1
+                all_rows.append({
+                    "id": q["id"],
+                    "category": category,
+                    "question": q["question"],
+                    "pass": score["pass"],
+                    "coverage": f"{score['coverage']*100:.0f}%",
+                    "hits": score["hits"],
+                    "missed": score["missed"],
+                    "gap": q.get("gap", ""),
+                    "answer_preview": answer[:500] if answer else ""
+                })
+            except Exception as e:
+                all_rows.append({
+                    "id": q["id"],
+                    "category": category,
+                    "question": q["question"],
+                    "pass": False,
+                    "coverage": "0%",
+                    "hits": [],
+                    "missed": q["expected_concepts"],
+                    "error": str(e)
+                })
+            time.sleep(delay)
+        
+        pct = (cat_passed / len(questions) * 100) if questions else 0
+        category_summary[category] = {
+            "passed": cat_passed,
+            "total": len(questions),
+            "pct": round(pct, 1)
+        }
+    
+    total_passed = sum(s["passed"] for s in category_summary.values())
+    total_all = sum(s["total"] for s in category_summary.values())
+    overall_pct = (total_passed / total_all * 100) if total_all else 0
+    
+    return jsonify({
+        "results": all_rows,
+        "category_summary": category_summary,
+        "overall": {
+            "passed": total_passed,
+            "total": total_all,
+            "pct": round(overall_pct, 1),
+            "meets_bar": overall_pct >= 70
+        }
+    })
+
+@app.route("/eval/single", methods=["POST"])
+def run_single_eval():
+    """Run evaluation on a single question by ID"""
+    data = request.json
+    question_id = data.get("id", "").strip()
+    
+    for category, questions in EVAL_QUESTIONS.items():
+        for q in questions:
+            if q["id"] == question_id:
+                try:
+                    result = run_neuro_agent(q["question"])
+                    answer = result.get("answer", "")
+                    score = _score_answer(answer, q["expected_concepts"])
+                    return jsonify({
+                        "id": q["id"],
+                        "category": category,
+                        "question": q["question"],
+                        "pass": score["pass"],
+                        "coverage": f"{score['coverage']*100:.0f}%",
+                        "hits": score["hits"],
+                        "missed": score["missed"],
+                        "gap": q.get("gap", ""),
+                        "answer": answer,
+                        "trace": result.get("trace", []),
+                        "cited_papers": result.get("cited_papers", [])
+                    })
+                except Exception as e:
+                    return jsonify({"error": str(e)}), 500
+    
+    return jsonify({"error": f"Question ID '{question_id}' not found"}), 404
+
+
 if __name__ == "__main__":
     print("\n[Neuro Co-Scientist] Starting...")
     print("   Open: http://localhost:5000\n")

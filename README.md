@@ -4,25 +4,25 @@
 
 ## Screenshots
 
-Screenshots follow the main user flow: ask a question, watch the pipeline run, read a grounded answer with sources, then manage saved papers in the library.
+Gallery order: advanced search and pipeline, grounded answers with citations, live query processing, then the paper library.
 
-### 1. Search & query expansion
-
-Natural-language question in the Search view while the backend runs (e.g. expanding the query, vector search, document retrieval, answer generation).
-
-![Search view with a Parkinson's disease question and processing state](Images/Screenshot%202026-03-03%20233804.png)
-
-### 2. Complex queries & full pipeline
+### 1. Complex queries & full pipeline
 
 Example of a detailed compound-focused question with the processing panel showing each stage of the workflow.
 
 ![Complex search query with visible pipeline steps](Images/Screenshot%202026-03-03%20133314.png)
 
-### 3. Grounded answer, citations & reasoning trace
+### 2. Grounded answer, citations & reasoning trace
 
 Response with PMID-linked sources, optional Save on papers, and an expandable step-by-step reasoning trace (e.g. `get_valid_rag_context`).
 
 ![Answer with cited papers and expanded reasoning trace](Images/Screenshot%202026-03-03%20233645.png)
+
+### 3. Search & query expansion
+
+Natural-language question in the Search view while the backend runs (e.g. expanding the query, vector search, document retrieval, answer generation).
+
+![Search view with a Parkinson's disease question and processing state](Images/Screenshot%202026-03-03%20233804.png)
 
 ### 4. Library & folders
 

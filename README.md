@@ -2,7 +2,33 @@
 
 **RAG-Powered Neuroscience Research Assistant on Google Cloud**
 
-Live Demo: https://neuro-co-scientist-900778453257.us-central1.run.app
+## Screenshots
+
+Screenshots follow the main user flow: ask a question, watch the pipeline run, read a grounded answer with sources, then manage saved papers in the library.
+
+### 1. Search & query expansion
+
+Natural-language question in the Search view while the backend runs (e.g. expanding the query, vector search, document retrieval, answer generation).
+
+![Search view with a Parkinson's disease question and processing state](Images/Screenshot%202026-03-03%20233804.png)
+
+### 2. Complex queries & full pipeline
+
+Example of a detailed compound-focused question with the processing panel showing each stage of the workflow.
+
+![Complex search query with visible pipeline steps](Images/Screenshot%202026-03-03%20133314.png)
+
+### 3. Grounded answer, citations & reasoning trace
+
+Response with PMID-linked sources, optional Save on papers, and an expandable step-by-step reasoning trace (e.g. `get_valid_rag_context`).
+
+![Answer with cited papers and expanded reasoning trace](Images/Screenshot%202026-03-03%20233645.png)
+
+### 4. Library & folders
+
+Saved papers organized into folders (e.g. All Papers, Unfiled, custom folders) with move/remove actions.
+
+![Library view: folders and saved papers](Images/Screenshot%202026-03-03%20233808.png)
 
 ---
 
